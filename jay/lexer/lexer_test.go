@@ -10,57 +10,233 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `=+(){},;`
+	t.Parallel()
 
 	tests := []struct {
-		expectedType    token.TokenType
-		expectedLiteral string
+		name           string
+		input          string
+		expectedTokens []token.Token
 	}{
 		{
-			expectedType:    token.ASSIGN,
-			expectedLiteral: "=",
+			name:  "one",
+			input: `=+(){},;`,
+			expectedTokens: []token.Token{
+				{
+					Type:    token.ASSIGN,
+					Literal: "=",
+				},
+				{
+					Type:    token.PLUS,
+					Literal: "+",
+				},
+				{
+					Type:    token.LPAREN,
+					Literal: "(",
+				},
+				{
+					Type:    token.RPAREN,
+					Literal: ")",
+				},
+				{
+					Type:    token.LBRACE,
+					Literal: "{",
+				},
+				{
+					Type:    token.RBRACE,
+					Literal: "}",
+				},
+				{
+					Type:    token.COMMA,
+					Literal: ",",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.EOF,
+					Literal: "",
+				},
+			},
 		},
 		{
-			expectedType:    token.PLUS,
-			expectedLiteral: "+",
-		},
-		{
-			expectedType:    token.LPAREN,
-			expectedLiteral: "(",
-		},
-		{
-			expectedType:    token.RPAREN,
-			expectedLiteral: ")",
-		},
-		{
-			expectedType:    token.LBRACE,
-			expectedLiteral: "{",
-		},
-		{
-			expectedType:    token.RBRACE,
-			expectedLiteral: "}",
-		},
-		{
-			expectedType:    token.COMMA,
-			expectedLiteral: ",",
-		},
-		{
-			expectedType:    token.SEMICOLON,
-			expectedLiteral: ";",
-		},
-		{
-			expectedType:    token.EOF,
-			expectedLiteral: "",
+			name: "two",
+			input: `let five = 5;
+			let ten = 10;
+
+			let add = fn(x, y) {
+				x + y;
+			};
+
+			let result = add(five, ten);
+			`,
+			expectedTokens: []token.Token{
+				{
+					Type:    token.LET,
+					Literal: "let",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "five",
+				},
+				{
+					Type:    token.ASSIGN,
+					Literal: "=",
+				},
+				{
+					Type:    token.INT,
+					Literal: "5",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.LET,
+					Literal: "let",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "ten",
+				},
+				{
+					Type:    token.ASSIGN,
+					Literal: "=",
+				},
+				{
+					Type:    token.INT,
+					Literal: "10",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.LET,
+					Literal: "let",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "add",
+				},
+				{
+					Type:    token.ASSIGN,
+					Literal: "=",
+				},
+				{
+					Type:    token.FUNCTION,
+					Literal: "fn",
+				},
+				{
+					Type:    token.LPAREN,
+					Literal: "(",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "x",
+				},
+				{
+					Type:    token.COMMA,
+					Literal: ",",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "y",
+				},
+				{
+					Type:    token.RPAREN,
+					Literal: ")",
+				},
+				{
+					Type:    token.LBRACE,
+					Literal: "{",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "x",
+				},
+				{
+					Type:    token.PLUS,
+					Literal: "+",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "y",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.RBRACE,
+					Literal: "}",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.LET,
+					Literal: "let",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "result",
+				},
+				{
+					Type:    token.ASSIGN,
+					Literal: "=",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "add",
+				},
+				{
+					Type:    token.LPAREN,
+					Literal: "(",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "five",
+				},
+				{
+					Type:    token.COMMA,
+					Literal: ",",
+				},
+				{
+					Type:    token.IDENT,
+					Literal: "ten",
+				},
+				{
+					Type:    token.RPAREN,
+					Literal: ")",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.EOF,
+					Literal: "",
+				},
+			},
 		},
 	}
 
-	l := New(input)
-
 	for _, tt := range tests {
-		tok := l.NextToken()
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-		assert.Equal(t, tt.expectedType, tok.Type, fmt.Sprintf("exepcted: %s, got: %s", tt.expectedType, tok.Type))
+			l := New(tt.input)
 
-		assert.Equal(t, tt.expectedLiteral, tok.Literal, fmt.Sprintf("exepcted: %s, got: %s", tt.expectedType, tok.Type))
+			for _, expectedToken := range tt.expectedTokens {
+				token := l.NextToken()
+
+				assert.Equal(t, expectedToken.Type, token.Type, fmt.Sprintf("exepcted: %s, got: %s", expectedToken.Type, token.Type))
+
+				assert.Equal(t, expectedToken.Literal, token.Literal, fmt.Sprintf("exepcted: %s, got: %s", expectedToken.Literal, token.Literal))
+			}
+		})
 	}
 }
