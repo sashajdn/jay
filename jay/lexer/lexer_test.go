@@ -76,7 +76,11 @@ func TestNextToken(t *testing.T) {
 				return true;
 			} else {
 				return false;
-			}`,
+			}
+
+			==;
+			!=;
+			`,
 			expectedTokens: []token.Token{
 				{
 					Type:    token.LET,
@@ -337,6 +341,22 @@ func TestNextToken(t *testing.T) {
 				{
 					Type:    token.RBRACE,
 					Literal: "}",
+				},
+				{
+					Type:    token.EQ,
+					Literal: "==",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.NOT_EQ,
+					Literal: "!=",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
 				},
 				{
 					Type:    token.EOF,
