@@ -69,6 +69,8 @@ func TestNextToken(t *testing.T) {
 			};
 
 			let result = add(five, ten);
+			!-/*5;
+			5 < 10 > 5;
 			`,
 			expectedTokens: []token.Token{
 				{
@@ -210,6 +212,54 @@ func TestNextToken(t *testing.T) {
 				{
 					Type:    token.RPAREN,
 					Literal: ")",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.BANG,
+					Literal: "!",
+				},
+				{
+					Type:    token.MINUS,
+					Literal: "-",
+				},
+				{
+					Type:    token.SLASH,
+					Literal: "/",
+				},
+				{
+					Type:    token.ASTERISK,
+					Literal: "*",
+				},
+				{
+					Type:    token.INT,
+					Literal: "5",
+				},
+				{
+					Type:    token.SEMICOLON,
+					Literal: ";",
+				},
+				{
+					Type:    token.INT,
+					Literal: "5",
+				},
+				{
+					Type:    token.LT,
+					Literal: "<",
+				},
+				{
+					Type:    token.INT,
+					Literal: "10",
+				},
+				{
+					Type:    token.GT,
+					Literal: ">",
+				},
+				{
+					Type:    token.INT,
+					Literal: "5",
 				},
 				{
 					Type:    token.SEMICOLON,
