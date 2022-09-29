@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jay/jay/ast"
 	"jay/jay/lexer"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ func TestLetStatements(t *testing.T) {
 	t.Parallel()
 
 	input := `
-let x = 5;
+let x 5;
 let y = 10;
 let foobar = 838338;
 	`
@@ -23,6 +24,7 @@ let foobar = 838338;
 	p := New(l)
 
 	program := p.ParseProgram()
+	checkParserErrors(t, p)
 	require.NotNil(t, program)
 
 	assert.Len(t, program.Statements, 3, "expecting %d statements, got %d", 3, len(program.Statements))
@@ -55,4 +57,9 @@ func testLetStatements(t *testing.T, s ast.Statement, name string) {
 
 	assert.Equal(t, name, letStmt.Name.Value, "Unexpected name value, got %s, expected %s", letStmt.Name.Value, name)
 	assert.Equal(t, name, letStmt.Name.TokenLiteral(), "Unexpected token literal, got %s, expected %s", letStmt.TokenLiteral(), name)
+}
+
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	require.Empty(t, errors, fmt.Sprintf("Errors found in parser: \n%s", strings.Join(errors, "\n")))
 }
