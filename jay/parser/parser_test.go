@@ -28,21 +28,22 @@ let foobar = 838338;
 	assert.Len(t, program.Statements, 3, "expecting %d statements, got %d", 3, len(program.Statements))
 
 	tests := []struct {
-		name              string
 		expectedIdentfier string
 	}{
-		{},
+		{
+			expectedIdentfier: "x",
+		},
+		{
+			expectedIdentfier: "y",
+		},
+		{
+			expectedIdentfier: "foobar",
+		},
 	}
 
 	for i, tt := range tests {
-		tt := tt
-
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			stmt := program.Statements[i]
-			testLetStatements(t, stmt, tt.expectedIdentfier)
-		})
+		stmt := program.Statements[i]
+		testLetStatements(t, stmt, tt.expectedIdentfier)
 	}
 }
 
@@ -52,6 +53,6 @@ func testLetStatements(t *testing.T, s ast.Statement, name string) {
 	letStmt, ok := s.(*ast.LetStatement)
 	assert.True(t, ok, fmt.Sprintf("Invalid type assertion with type %T, expected: *ast.LetStatement", s))
 
-	assert.Equal(t, name, letStmt.Name.Value)
-	assert.Equal(t, name, letStmt.TokenLiteral())
+	assert.Equal(t, name, letStmt.Name.Value, "Unexpected name value, got %s, expected %s", letStmt.Name.Value, name)
+	assert.Equal(t, name, letStmt.Name.TokenLiteral(), "Unexpected token literal, got %s, expected %s", letStmt.TokenLiteral(), name)
 }
