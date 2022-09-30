@@ -15,7 +15,7 @@ func TestLetStatements(t *testing.T) {
 	t.Parallel()
 
 	input := `
-let x 5;
+let x = 5;
 let y = 10;
 let foobar = 838338;
 	`
